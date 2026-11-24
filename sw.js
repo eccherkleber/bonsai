@@ -1,5 +1,5 @@
 // Cache só do "casco" do app. Dados e fotos (supabase.co) sempre vão à rede.
-const V = 'bonsai-v1';
+const V = 'bonsai-v2';
 const CASCO = ['./', 'index.html', 'supabase.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-180.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(V).then(c => c.addAll(CASCO)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {

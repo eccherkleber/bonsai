@@ -67,7 +67,7 @@ h2{font-size:15px;color:var(--mut);margin:18px 2px 8px;font-weight:600;text-tran
 .info{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;padding:12px;font-size:14.5px}
 .info span:nth-child(odd){color:var(--mut)}
 .empty{color:var(--mut);text-align:center;padding:30px 10px}
-.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--card);border:1px solid var(--ac);color:var(--tx);padding:10px 16px;border-radius:12px;z-index:40}
+.toast{max-width:90vw;word-break:break-all;font-size:13px;position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--card);border:1px solid var(--ac);color:var(--tx);padding:10px 16px;border-radius:12px;z-index:40}
 .task{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:8px}
 .task .in{flex:1;min-width:0}.task button{flex:none;border:0;background:var(--ac2);color:var(--ac);border-radius:10px;padding:10px 12px}
 </style>
@@ -350,6 +350,16 @@ function ampliar(path){
   v.innerHTML = `<img src="${esc(url(path))}" alt=""><button class="ib">✕</button>`;
   v.onclick = () => v.remove(); document.body.appendChild(v);
 }
+
+
+// diagnóstico: se uma foto não carregar, mostra o motivo (uma vez)
+let _diag = false;
+document.addEventListener('error', async ev => {
+  const t = ev.target; if (_diag || !t || t.tagName !== 'IMG' || !t.src.startsWith('http')) return;
+  _diag = true;
+  try { const r = await fetch(t.src); const x = (await r.text()).slice(0, 160); toast('Foto falhou: HTTP ' + r.status + ' ' + x); }
+  catch (e) { toast('Foto falhou (rede/CORS): ' + e.message); }
+}, true);
 
 // ---------- início ----------
 async function entrar(){
