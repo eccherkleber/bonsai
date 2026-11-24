@@ -97,7 +97,7 @@ async function urlsPara(paths){
   const falta = [...new Set(paths.filter(p => p && !S.urls.has(p)))];
   for (let i = 0; i < falta.length; i += 100) {
     const lote = falta.slice(i, i+100);
-    const { data, error } = await sb.storage.from('fotos').createSignedUrls(lote, 3600);
+    const { data, error } = await sb.storage.from('fotos').createSignedUrls(lote, 21600);
     if (error) { console.error(error); continue; }
     data.forEach(o => { if (o.signedUrl) S.urls.set(o.path, o.signedUrl); });
   }
@@ -352,14 +352,26 @@ function ampliar(path){
 }
 
 
-// diagnóstico: se uma foto não carregar, mostra o motivo (uma vez)
-let _diag = false;
+// recuperação: se uma foto falhar (link vencido), renova os links e redesenha (no máx. 1x por minuto)
+let _rec = 0;
 document.addEventListener('error', async ev => {
-  const t = ev.target; if (_diag || !t || t.tagName !== 'IMG' || !t.src.startsWith('http')) return;
-  _diag = true;
-  try { const r = await fetch(t.src); const x = (await r.text()).slice(0, 160); toast('Foto falhou: HTTP ' + r.status + ' ' + x); }
-  catch (e) { toast('Foto falhou (rede/CORS): ' + e.message); }
+  const t = ev.target; if (!t || t.tagName !== 'IMG' || !t.src.startsWith('http')) return;
+  if (Date.now() - _rec < 60000) return; _rec = Date.now();
+  await renova();
 }, true);
+async function renova(){
+  if (!S.user) return;
+  try {
+    S.urls.clear(); await carregar();
+    if (S.det) { await abrir(S.det.id); } else desenha();
+  } catch (e) { console.error(e); }
+}
+// ao voltar para o app depois de um tempo, renova dados e links
+let _saiu = 0;
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { _saiu = Date.now(); return; }
+  if (_saiu && Date.now() - _saiu > 30 * 60000 && !document.querySelector('.sheet')) renova();
+});
 
 // ---------- início ----------
 async function entrar(){
