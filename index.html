@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Meus Bonsai</title>
+<meta name="theme-color" content="#121512">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bonsai">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+:root{--bg:#121512;--card:#1b201b;--tx:#e8ede8;--mut:#9aa59b;--ac:#6fbf84;--ac2:#243026;--bd:#2c342d;--danger:#f2877f;--warn:#e9b44c}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top));background:var(--bg);border-bottom:1px solid var(--bd)}
+header h1{flex:1;margin:0;font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib{width:44px;height:44px;border:0;border-radius:12px;background:var(--ac2);color:var(--ac);font-size:22px;line-height:1}
+main{padding:12px 12px calc(96px + env(safe-area-inset-bottom));max-width:760px;margin:0 auto}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;background:var(--card);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs button{flex:1;border:0;background:none;padding:12px 4px;color:var(--mut);font-size:14px}
+nav.tabs button.on{color:var(--ac);font-weight:600}
+nav.tabs .n{background:var(--warn);color:#000;border-radius:9px;padding:0 6px;font-size:12px;margin-left:4px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:600px){.grid{grid-template-columns:repeat(3,1fr)}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;overflow:hidden}
+.tree{text-align:left;padding:0;width:100%}
+.tree .cap{aspect-ratio:1/1;background:var(--ac2);display:flex;align-items:center;justify-content:center;font-size:40px;overflow:hidden}
+.tree .cap img{width:100%;height:100%;object-fit:cover;display:block}
+.tree .tx{padding:8px 10px 10px}
+.tree b{display:block;font-size:15px}
+.tree small{color:var(--mut);display:block;font-size:12.5px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.chip{flex:none;border:1px solid var(--bd);background:var(--card);border-radius:20px;padding:6px 12px;font-size:14px;color:var(--mut)}
+.chip.on{background:var(--ac2);color:var(--ac);border-color:var(--ac)}
+input,select,textarea{width:100%;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:11px 12px;font-size:16px}
+textarea{min-height:80px;resize:vertical}
+label{display:block;margin:12px 0 4px;color:var(--mut);font-size:13.5px}
+.btn{border:0;border-radius:12px;padding:13px 16px;background:var(--ac);color:#0b140d;font-weight:600;width:100%;margin-top:14px}
+.btn.sec{background:var(--ac2);color:var(--ac)}
+.btn.dng{background:transparent;color:var(--danger);border:1px solid var(--bd)}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.reg{display:flex;gap:10px;padding:10px;margin-bottom:8px;text-align:left;width:100%}
+.reg .th{flex:none;width:64px;height:64px;border-radius:10px;background:var(--ac2);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.reg .th img{width:100%;height:100%;object-fit:cover}
+.reg .in{flex:1;min-width:0}
+.reg b{display:block}.reg small{color:var(--mut)}.reg p{margin:2px 0 0;font-size:14px;overflow-wrap:anywhere}
+.tag{display:inline-block;border-radius:8px;padding:1px 8px;font-size:12px;background:var(--ac2);color:var(--ac);margin-left:6px}
+.tag.pl{background:#3a3220;color:var(--warn)}
+.late{color:var(--danger)}
+h2{font-size:15px;color:var(--mut);margin:18px 2px 8px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.login{max-width:360px;margin:12vh auto;padding:0 20px}
+.login h1{font-size:28px;margin:0 0 4px}.login p{color:var(--mut);margin:0 0 12px}
+.err{color:var(--danger);margin-top:10px;min-height:1.2em;font-size:14px}
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center}
+.sheet>div{background:var(--bg);border:1px solid var(--bd);border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:92vh;overflow:auto;padding:16px 16px calc(20px + env(safe-area-inset-bottom))}
+.sheet h3{margin:0 0 4px}
+.viewer{position:fixed;inset:0;z-index:30;background:#000;display:flex;align-items:center;justify-content:center}
+.viewer img{max-width:100%;max-height:100%}
+.viewer button{position:absolute;top:calc(12px + env(safe-area-inset-top));right:12px}
+.info{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;padding:12px;font-size:14.5px}
+.info span:nth-child(odd){color:var(--mut)}
+.empty{color:var(--mut);text-align:center;padding:30px 10px}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--card);border:1px solid var(--ac);color:var(--tx);padding:10px 16px;border-radius:12px;z-index:40}
+.task{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:8px}
+.task .in{flex:1;min-width:0}.task button{flex:none;border:0;background:var(--ac2);color:var(--ac);border-radius:10px;padding:10px 12px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="supabase.js"></script>
+<script>
+// Chave pública (publishable): segura para ficar no código. Os dados são protegidos por login + RLS.
+const SUPABASE_URL = 'https://mghhvgxtnpwzouimzceb.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_c2nTENmfsmgvyvhSa23S2g_e7e_gqHa';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true } });
+
+const TIPOS = ['Poda','Adubação','Transplante','Arame','Tratamento','Aquisição','Outro'];
+const LOCAIS = ['Chão','Prateleira','Indoor','Sombra'];
+const $app = document.getElementById('app');
+const S = { user:null, arvores:[], tarefas:[], aba:'arvores', filtro:'', busca:'', det:null, regs:[], urls:new Map() };
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const hoje = () => { const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+const fmt = d => d ? d.split('-').reverse().join('/') : '';
+const diasAte = d => Math.round((new Date(d+'T00:00:00') - new Date(hoje()+'T00:00:00')) / 864e5);
+function toast(t){ const e=document.createElement('div'); e.className='toast'; e.textContent=t; document.body.appendChild(e); setTimeout(()=>e.remove(),2600); }
+
+// ---------- fotos (bucket privado -> URLs assinadas) ----------
+async function urlsPara(paths){
+  const falta = [...new Set(paths.filter(p => p && !S.urls.has(p)))];
+  for (let i = 0; i < falta.length; i += 100) {
+    const lote = falta.slice(i, i+100);
+    const { data, error } = await sb.storage.from('fotos').createSignedUrls(lote, 3600);
+    if (error) { console.error(error); continue; }
+    data.forEach(o => { if (o.signedUrl) S.urls.set(o.path, o.signedUrl); });
+  }
+}
+const url = p => (p && S.urls.get(p)) || '';
+function img(p, alt=''){ const u = url(p); return u ? `<img loading="lazy" src="${esc(u)}" alt="${esc(alt)}">` : ''; }
+
+function redimensiona(file, max, qual){
+  return new Promise((ok, falha) => {
+    const im = new Image(), u = URL.createObjectURL(file);
+    im.onload = () => {
+      const k = Math.min(1, max / Math.max(im.width, im.height));
+      const c = document.createElement('canvas'); c.width = Math.round(im.width*k); c.height = Math.round(im.height*k);
+      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(u);
+      c.toBlob(b => b ? ok(b) : falha(new Error('Falha ao processar a foto')), 'image/jpeg', qual);
+    };
+    im.onerror = () => { URL.revokeObjectURL(u); falha(new Error('Não consegui abrir a foto')); };
+    im.src = u;
+  });
+}
+
+// ---------- login ----------
+function telaLogin(msg=''){
+  $app.innerHTML = `<div class="login"><h1>🌳 Meus Bonsai</h1><p>Entre para ver sua coleção.</p>
+  <form id="f"><label>E-mail</label><input id="em" type="email" autocomplete="username" required>
+  <label>Senha</label><input id="pw" type="password" autocomplete="current-password" required>
+  <button class="btn" type="submit">Entrar</button><div class="err" id="er">${esc(msg)}</div></form></div>`;
+  document.getElementById('f').onsubmit = async e => {
+    e.preventDefault();
+    const er = document.getElementById('er'); er.textContent = 'Entrando…';
+    const { error } = await sb.auth.signInWithPassword({ email: em.value.trim(), password: pw.value });
+    if (error) er.textContent = error.message.includes('Invalid') ? 'E-mail ou senha incorretos.' : error.message;
+  };
+}
+
+// ---------- dados ----------
+async function carregar(){
+  const [a, t] = await Promise.all([
+    sb.from('arvores_lista').select('*').order('nome'),
+    sb.from('tarefas').select('*').order('data')
+  ]);
+  if (a.error) throw a.error;
+  if (t.error) throw t.error;
+  S.arvores = a.data; S.tarefas = t.data;
+  await urlsPara(S.arvores.map(x => x.capa_path));
+}
+// 1 tarefa por árvore (a mais próxima), só até 30 dias à frente
+function tarefasVisiveis(){
+  const vistos = new Set(), out = [];
+  for (const t of S.tarefas) {
+    if (vistos.has(t.arvore_id) || diasAte(t.data) > 30) continue;
+    vistos.add(t.arvore_id); out.push(t);
+  }
+  return out;
+}
+
+// ---------- telas ----------
+function moldura(titulo, corpo, { voltar=false, acao='' } = {}){
+  const nt = tarefasVisiveis().filter(t => diasAte(t.data) <= 0).length;
+  $app.innerHTML = `<header>${voltar?'<button class="ib" id="vb" aria-label="Voltar">‹</button>':''}<h1>${esc(titulo)}</h1>${acao}</header>
+  <main>${corpo}</main>
+  <nav class="tabs"><button data-a="arvores" class="${S.aba==='arvores'?'on':''}">🌳 Árvores</button>
+  <button data-a="tarefas" class="${S.aba==='tarefas'?'on':''}">✅ Tarefas${nt?`<span class="n">${nt}</span>`:''}</button>
+  <button data-a="sair">Sair</button></nav>`;
+  document.querySelectorAll('nav.tabs button').forEach(b => b.onclick = async () => {
+    if (b.dataset.a === 'sair') { await sb.auth.signOut(); return; }
+    S.aba = b.dataset.a; S.det = null; desenha();
+  });
+  const vb = document.getElementById('vb'); if (vb) vb.onclick = () => { S.det = null; desenha(); };
+}
+function desenha(){ S.det ? telaDetalhe() : S.aba === 'tarefas' ? telaTarefas() : telaLista(); }
+
+function telaLista(){
+  const q = S.busca.toLowerCase();
+  const lista = S.arvores.filter(a => (!S.filtro || a.local === S.filtro) &&
+    (!q || (a.nome+' '+a.especie).toLowerCase().includes(q)));
+  const chips = ['', ...LOCAIS].map(l => `<button class="chip ${S.filtro===l?'on':''}" data-l="${l}">${l||'Todas'}</button>`).join('');
+  moldura('Meus Bonsai', `<input id="bq" type="search" placeholder="Buscar…" value="${esc(S.busca)}" style="margin-bottom:10px">
+    <div class="chips">${chips}</div>
+    ${lista.length ? `<div class="grid">${lista.map(a => `<button class="card tree" data-id="${a.id}">
+      <div class="cap">${img(a.capa_path, a.nome) || '🌳'}</div>
+      <div class="tx"><b>${esc(a.nome)}</b><small>${esc(a.especie)}${a.local?' · '+esc(a.local):''}</small><small>${a.registros} registro(s)</small></div></button>`).join('')}</div>`
+      : '<div class="empty">Nenhuma árvore encontrada.</div>'}`,
+    { acao: '<button class="ib" id="nv" aria-label="Nova árvore">＋</button>' });
+  document.querySelectorAll('.chip').forEach(c => c.onclick = () => { S.filtro = c.dataset.l; telaLista(); });
+  document.querySelectorAll('.tree').forEach(c => c.onclick = () => abrir(c.dataset.id));
+  const bq = document.getElementById('bq');
+  bq.oninput = () => { S.busca = bq.value; const p = bq.selectionStart; telaLista(); const n = document.getElementById('bq'); n.focus(); n.setSelectionRange(p,p); };
+  document.getElementById('nv').onclick = () => formArvore(null);
+}
+
+let mostraTodas = false;
+function telaTarefas(){
+  const vis = tarefasVisiveis();
+  const lim = mostraTodas ? vis.length : 5;
+  const item = t => { const d = diasAte(t.data);
+    return `<div class="card task"><div class="in"><b>${esc(t.nome)}</b> <span class="tag pl">${esc(t.tipo)}</span>
+      <small class="${d<0?'late':''}" style="display:block;color:${d<0?'':'var(--mut)'}">${d<0?'Atrasada '+(-d)+' d · ':d===0?'Hoje · ':''}${fmt(t.data)}${t.obs?' — '+esc(t.obs):''}</small></div>
+      <button data-id="${t.id}">Concluir</button></div>`; };
+  moldura('Tarefas', vis.length
+    ? vis.slice(0, lim).map(item).join('') + (vis.length > lim ? `<button class="btn sec" id="mais">Mais ${vis.length-lim} tarefa(s)</button>` : '')
+    : '<div class="empty">Nada planejado para os próximos 30 dias. 🌱</div>');
+  document.querySelectorAll('.task button').forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    const { error } = await sb.from('registros').update({ status:'feito', data: hoje() }).eq('id', b.dataset.id);
+    if (error) { toast('Erro: '+error.message); b.disabled = false; return; }
+    toast('Tarefa concluída'); await carregar(); telaTarefas();
+  });
+  const m = document.getElementById('mais'); if (m) m.onclick = () => { mostraTodas = true; telaTarefas(); };
+}
+
+async function abrir(id){
+  S.det = S.arvores.find(a => a.id === id);
+  moldura(S.det.nome, '<div class="empty">Carregando…</div>', { voltar:true });
+  const { data, error } = await sb.from('registros').select('*').eq('arvore_id', id).order('data', { ascending:false }).order('criado', { ascending:false });
+  if (error) { toast('Erro: '+error.message); return; }
+  S.regs = data;
+  await urlsPara(data.map(r => r.thumb_path));
+  telaDetalhe();
+}
+
+function telaDetalhe(){
+  const a = S.det;
+  const linhas = [['Espécie',a.especie],['Origem',a.origem],['Aquisição',fmt(a.aquisicao)],['Estilo',a.estilo],['Vaso',a.vaso],['Local',a.local],['Notas',a.notas]]
+    .filter(x => x[1]).map(x => `<span>${x[0]}</span><span>${esc(x[1])}</span>`).join('');
+  const plan = S.regs.filter(r => r.status === 'planejado').sort((x,y) => x.data.localeCompare(y.data));
+  const feit = S.regs.filter(r => r.status === 'feito');
+  const reg = r => `<button class="card reg" data-id="${r.id}"><div class="th">${img(r.thumb_path) || (r.foto_path ? '📷' : '')}</div>
+    <div class="in"><b>${esc(r.tipo)}<span class="tag ${r.status==='planejado'?'pl':''}">${r.status==='planejado'?'planejado':'feito'}</span></b>
+    <small>${fmt(r.data)}</small>${r.obs?`<p>${esc(r.obs)}</p>`:''}</div></button>`;
+  moldura(a.nome, `<div class="card info">${linhas || '<span>—</span><span>Sem detalhes</span>'}</div>
+    <div class="row"><button class="btn" id="nr">＋ Registro</button><button class="btn sec" id="ea">Editar árvore</button></div>
+    ${plan.length ? '<h2>Planejado</h2>' + plan.map(reg).join('') : ''}
+    <h2>Histórico (${feit.length})</h2>${feit.length ? feit.map(reg).join('') : '<div class="empty">Sem registros ainda.</div>'}`,
+    { voltar:true });
+  document.getElementById('nr').onclick = () => formRegistro(null);
+  document.getElementById('ea').onclick = () => formArvore(a);
+  document.querySelectorAll('.reg').forEach(b => b.onclick = () => formRegistro(S.regs.find(r => r.id === b.dataset.id)));
+}
+
+// ---------- formulários ----------
+function folha(html){
+  const el = document.createElement('div'); el.className = 'sheet'; el.innerHTML = `<div>${html}</div>`;
+  el.addEventListener('click', e => { if (e.target === el) el.remove(); });
+  document.body.appendChild(el); return el;
+}
+
+function formArvore(a){
+  const el = folha(`<h3>${a?'Editar árvore':'Nova árvore'}</h3><form id="fa">
+  <label>Nome</label><input name="nome" required value="${esc(a?.nome)}">
+  <label>Espécie</label><input name="especie" value="${esc(a?.especie)}">
+  <div class="row"><div><label>Origem</label><input name="origem" value="${esc(a?.origem)}"></div>
+  <div><label>Aquisição</label><input type="date" name="aquisicao" value="${esc(a?.aquisicao)}"></div></div>
+  <div class="row"><div><label>Estilo</label><input name="estilo" value="${esc(a?.estilo)}"></div>
+  <div><label>Vaso</label><input name="vaso" value="${esc(a?.vaso)}"></div></div>
+  <div class="row"><div><label>Local</label><select name="local"><option value="">—</option>${LOCAIS.map(l=>`<option ${a?.local===l?'selected':''}>${l}</option>`).join('')}</select></div>
+  <div><label>Valor (R$)</label><input name="valor" inputmode="decimal" value="${esc(a?.valor ?? '')}"></div></div>
+  <label>Notas</label><textarea name="notas">${esc(a?.notas)}</textarea>
+  <button class="btn" type="submit">Salvar</button>
+  ${a?'<button class="btn dng" type="button" id="del">Excluir árvore</button>':''}
+  <button class="btn sec" type="button" id="cn">Cancelar</button><div class="err" id="er"></div></form>`);
+  el.querySelector('#cn').onclick = () => el.remove();
+  el.querySelector('#fa').onsubmit = async e => {
+    e.preventDefault(); const f = new FormData(e.target);
+    const v = parseFloat(String(f.get('valor')).replace(',', '.'));
+    const row = { nome:f.get('nome').trim(), especie:f.get('especie').trim(), origem:f.get('origem').trim(),
+      aquisicao:f.get('aquisicao') || null, estilo:f.get('estilo').trim(), vaso:f.get('vaso').trim(),
+      local:f.get('local'), notas:f.get('notas').trim(), valor:isNaN(v) ? null : v };
+    const r = a ? await sb.from('arvores').update(row).eq('id', a.id) : await sb.from('arvores').insert(row);
+    if (r.error) { el.querySelector('#er').textContent = r.error.message; return; }
+    el.remove(); await carregar();
+    if (a) { S.det = S.arvores.find(x => x.id === a.id); telaDetalhe(); } else desenha();
+    toast('Salvo');
+  };
+  const d = el.querySelector('#del');
+  if (d) d.onclick = async () => {
+    if (!confirm('Excluir "'+a.nome+'" e todos os registros e fotos dela? Não dá para desfazer.')) return;
+    const paths = S.regs.flatMap(r => [r.foto_path, r.thumb_path]).filter(Boolean);
+    if (paths.length) await sb.storage.from('fotos').remove(paths);
+    const r = await sb.from('arvores').delete().eq('id', a.id);
+    if (r.error) { el.querySelector('#er').textContent = r.error.message; return; }
+    el.remove(); S.det = null; await carregar(); desenha(); toast('Árvore excluída');
+  };
+}
+
+function formRegistro(r){
+  const a = S.det;
+  const tipos = [...new Set([...TIPOS, ...S.regs.map(x => x.tipo)])];
+  const el = folha(`<h3>${r?'Registro':'Novo registro'} — ${esc(a.nome)}</h3><form id="fr">
+  <div class="row"><div><label>Data</label><input type="date" name="data" required value="${esc(r?.data || hoje())}"></div>
+  <div><label>Tipo</label><select name="tipo">${tipos.map(t=>`<option ${r?.tipo===t?'selected':''}>${esc(t)}</option>`).join('')}</select></div></div>
+  <label>Situação</label><select name="status"><option value="feito" ${r?.status!=='planejado'?'selected':''}>Feito</option><option value="planejado" ${r?.status==='planejado'?'selected':''}>Planejado</option></select>
+  <label>Observações</label><textarea name="obs">${esc(r?.obs)}</textarea>
+  ${r?.foto_path ? `<label>Foto atual</label><button type="button" class="card reg" id="vf"><div class="th">${img(r.thumb_path||r.foto_path)}</div><div class="in"><small>Toque para ampliar</small></div></button>` : ''}
+  <label>${r?.foto_path ? 'Trocar foto' : 'Foto'}</label><input type="file" name="foto" accept="image/*">
+  <button class="btn" type="submit" id="sv">Salvar</button>
+  ${r?'<button class="btn dng" type="button" id="del">Excluir registro</button>':''}
+  <button class="btn sec" type="button" id="cn">Cancelar</button><div class="err" id="er"></div></form>`);
+  el.querySelector('#cn').onclick = () => el.remove();
+  const vf = el.querySelector('#vf');
+  if (vf) vf.onclick = async () => { await urlsPara([r.foto_path]); ampliar(r.foto_path); };
+  el.querySelector('#fr').onsubmit = async e => {
+    e.preventDefault();
+    const f = new FormData(e.target), er = el.querySelector('#er'), sv = el.querySelector('#sv');
+    sv.disabled = true; er.textContent = 'Salvando…';
+    try {
+      const row = { data:f.get('data'), tipo:f.get('tipo'), obs:f.get('obs').trim(), status:f.get('status') };
+      let id = r?.id;
+      if (!r) {
+        const ins = await sb.from('registros').insert({ ...row, arvore_id:a.id }).select('id').single();
+        if (ins.error) throw ins.error; id = ins.data.id;
+      } else {
+        const up = await sb.from('registros').update(row).eq('id', id);
+        if (up.error) throw up.error;
+      }
+      const file = f.get('foto');
+      if (file && file.size) {
+        er.textContent = 'Enviando foto…';
+        const { data:{ user } } = await sb.auth.getUser();
+        const base = `${user.id}/${a.id}/${id}`;
+        const [grande, mini] = await Promise.all([redimensiona(file, 1600, .82), redimensiona(file, 480, .75)]);
+        const stamp = Date.now();  // caminho novo a cada troca evita cache de URL antiga
+        const pf = `${base}_${stamp}.jpg`, pt = `${base}_${stamp}_t.jpg`;
+        for (const [p, b] of [[pf, grande], [pt, mini]]) {
+          const u = await sb.storage.from('fotos').upload(p, b, { contentType:'image/jpeg', upsert:true });
+          if (u.error) throw u.error;
+        }
+        const up = await sb.from('registros').update({ foto_path:pf, thumb_path:pt }).eq('id', id);
+        if (up.error) throw up.error;
+        const velhos = [r?.foto_path, r?.thumb_path].filter(Boolean);
+        if (velhos.length) await sb.storage.from('fotos').remove(velhos);
+      }
+      el.remove(); await carregar(); await abrir(a.id); toast('Salvo');
+    } catch (x) { er.textContent = 'Erro: ' + (x.message || x); sv.disabled = false; }
+  };
+  const d = el.querySelector('#del');
+  if (d) d.onclick = async () => {
+    if (!confirm('Excluir este registro?')) return;
+    const paths = [r.foto_path, r.thumb_path].filter(Boolean);
+    if (paths.length) await sb.storage.from('fotos').remove(paths);
+    const x = await sb.from('registros').delete().eq('id', r.id);
+    if (x.error) { el.querySelector('#er').textContent = x.error.message; return; }
+    el.remove(); await carregar(); await abrir(a.id); toast('Registro excluído');
+  };
+}
+
+function ampliar(path){
+  const v = document.createElement('div'); v.className = 'viewer';
+  v.innerHTML = `<img src="${esc(url(path))}" alt=""><button class="ib">✕</button>`;
+  v.onclick = () => v.remove(); document.body.appendChild(v);
+}
+
+// ---------- início ----------
+async function entrar(){
+  $app.innerHTML = '<div class="empty" style="margin-top:30vh">Carregando…</div>';
+  try { await carregar(); desenha(); }
+  catch (e) { $app.innerHTML = `<div class="login"><h1>Ops</h1><p>Não consegui carregar os dados.</p><div class="err">${esc(e.message||e)}</div><button class="btn" onclick="location.reload()">Tentar de novo</button></div>`; }
+}
+sb.auth.onAuthStateChange((ev, sess) => {
+  if (ev === 'INITIAL_SESSION' || ev === 'SIGNED_IN' || ev === 'SIGNED_OUT') {
+    const novo = sess?.user?.id || null;
+    if (ev !== 'INITIAL_SESSION' && novo === (S.user?.id || null)) return;   // ignora SIGNED_IN repetido ao voltar para o app
+    S.user = sess?.user || null; S.det = null; S.aba = 'arvores';
+    // não chamar o supabase direto dentro do callback: adia
+    setTimeout(() => S.user ? entrar() : telaLogin(), 0);
+  }
+});
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
